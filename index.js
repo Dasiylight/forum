@@ -1,5 +1,5 @@
 const userApi = require("./api/userApi")
-// const bookApi = require('./api/talkApi')
+const messageApi = require("./api/messageApi")
 const fs = require('fs')
 const path = require('path')
 const bodyParser =require("body-parser")
@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 
 // 后端api路由
 app.use('/api/user', userApi)
-// app.use('/api/talk', talkApi)
+app.use('/api/message', messageApi)
 
 
 // 监听端口

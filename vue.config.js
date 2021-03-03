@@ -8,6 +8,11 @@ module.exports = {
           '^/api': '/api' // 替换target中的请求地址，也就是说在请求http://127.0.0.1:8888/XXXXX这个地址的时候直接写成/api即可。
         }
       }
-    }
+    },
+    // overlay: {
+    //   warnings: false,
+    //   errors: false
+    // },
+    // lintOnSave: false
   }
 }

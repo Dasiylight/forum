@@ -3,8 +3,12 @@ var sqlMap = {
   // 用户
   userinfo: {
     add: 'insert into userinfo(username,password) values(?, ?)',
-    search: 'select * from userinfo where username = ?'
+    search: 'select * from userinfo where username = ?',
   },
+  message: {
+    show: 'select * from ??',
+    add: 'insert into message(username,title,content) values(?, ?, ?)',
+  }
 //   reader: {
 //     add: 'insert into reader(name) values (?)',
 //     delete: 'delete from reader where name = ?',

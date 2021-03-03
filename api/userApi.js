@@ -21,49 +21,51 @@ var jsonWrite = function (res, ret) {
 }
 
 // 增加用户接口
+//发送req，返回res
 router.post('/addUser', (req, res) => {
   var sql = $sql.userinfo.add;
+  var sql_name = $sql.userinfo.search
   var params = req.body;
   console.log(params);
-  conn.query(sql, [params.username, params.password], function(err, result) {
+  conn.query(sql_name,params.username,function(err,result) {
     if (err) {
       console.log(err);
     }
-    if (result) {
-      jsonWrite(res, result);
+    //无重复用户名时，添加用户名，注册成功
+    if (result[0] == undefined) {
+      conn.query(sql, [params.username, params.password], function (err, result) {
+        if (err) {
+          console.log(err);
+        }
+        if (result) {
+          jsonWrite(res, result);
+        }
+      })
+    }else {
+      res.send('-1')  //存在用户名时，返回-1值，注册不成功
     }
   })
-})
+});
 
 
-// router.post('/cancelReader', (req, res) => {
-//   var sql = $sql.reader.delete
-//   var params = req.body
-//   console.log(params)
-//   conn.query(sql, [params.name], function (err, result) {
-//     if (err) {
-//       console.log(err)
-//     }
-//     if (result) {
-//       jsonWrite(res, result)
-//     }
-//   })
-// })
-//
-router.get('/searchUser', (req, res) => {
+router.post('/searchUser', (req, res) => {
   var sql = $sql.userinfo.search
-  var params = req.query
-  console.log(params)
-  conn.query(sql, [params.username], function (err, result) {
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, [params.username, params.password], function (err, result) {
     if (err) {
       console.log(err)
     }
-    if (result) {
+    //未找到用户名时
+    else if (result[0] == undefined){
+      res.send('-1');
+    }
+    else {
       console.log(result)
-      res.send(result)
+      jsonWrite(res, result)
     }
   })
-})
+});
 //
 // router.post('/readerBorrow', (req, res) => {
 //   var sql = $sql.reader.borrowBook
