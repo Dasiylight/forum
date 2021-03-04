@@ -1,12 +1,13 @@
 # 简易留言版的实现
 
+
 ##环境依赖
 node v14.15.0  
 vue.js v3.12.1  
 MySQL
 
 
-## 环境配置
+### 环境配置
 ```
 npm install
 node index //在根目录下运行
