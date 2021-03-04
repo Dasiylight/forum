@@ -47,4 +47,7 @@ npm run serve
   |-- vue.config.js  //设置了跨域代理
 
 ```
+### 内容参考
+Vue: <https://cn.vuejs.org/v2/guide/>  
+Element UI: <https://element.eleme.cn/>  
 
