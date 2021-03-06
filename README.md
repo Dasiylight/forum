@@ -57,21 +57,22 @@ npm run serve
 ### 目录结构
 ```
 |-- forum
-  |-- api  //api文件夹为与数据库的各个表连接接口
-    |-- userApi.js
-    |-- messageApi.js
+  |-- server  //服务器后端代码
+      |-- App.vue
+      |-- db.js //配置数据库连接
+      |-- index.js //定义与监听后端服务器
+      |-- sqlMap.js  //保存实现对MySQL进行操作的语句
+      |-- api  //api文件夹为与数据库的各个表连接接口
+        |-- userApi.js
+        |-- messageApi.js
   |-- src  //储存了网页的源码
-    |-- components //留言板，登录，注册界面
-      |-- forum.vue
-      |-- logIn.vue
-      |-- Register.vue
-    |-- router //路由配置
-      |--index.js
-    |-- App.vue
-    |-- main.js
-  |-- db.js //配置数据库连接
-  |-- index.js //定义与监听后端服务器
-  |-- sqlMap.js  //保存实现对MySQL进行操作的语句
+      |-- components //留言板，登录，注册界面
+        |-- forum.vue
+        |-- logIn.vue
+        |-- Register.vue
+        |-- router //路由配置
+      |-- App.vue
+      |-- main.js
   |-- vue.config.js  //设置了跨域代理
 
 ```
