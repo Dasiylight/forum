@@ -9,21 +9,63 @@ MySQL
 ### 环境配置
 ```
 npm install
-node index //在根目录下运行
+cd server
+node index 
 ```
 
-### 数据库配置说明
-数据库采用本地数据库，db.js文件配置连接mysql数据库，数据表已事先在本地创建。  
-数据库名：db2 (可在db.js处修改)  
-表名：userinfo, message;  
-message变量名：username, title, content;  
-userinfo变量名：uid, username, password;
+### 数据库配置
+```
+CREATE DATABASE db2;
+USE db2;
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for message
+-- ----------------------------
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message`  (
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for userinfo
+-- ----------------------------
+DROP TABLE IF EXISTS `userinfo`;
+CREATE TABLE `userinfo`  (
+  `uid` bigint(0) NOT NULL AUTO_INCREMENT,
+  `username` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `password` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  PRIMARY KEY (`uid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;
+```
 
 
 ### 开发编译
 ```
 npm run serve
 //npm run build
+```
+
+### 登录逻辑
+```flow
+st=>start: 开始
+e=>end: 登录
+io1=>inputoutput: 输入用户名密码
+sub1=>subroutine: 数据库查询子类
+cond=>condition: 是否有此用户
+cond2=>condition: 密码是否正确
+op=>operation: 读入用户信息
+
+st->io1->sub1->cond
+cond(yes,right)->cond2
+cond(no)->io1(right)
+cond2(yes,right)->op->e
+cond2(no)->io1
 ```
 
 ### 目录结构
