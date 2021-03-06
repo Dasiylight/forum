@@ -52,7 +52,7 @@ npm run serve
 ```
 
 ### 登录逻辑
-![Image text] https://github.com/Dasiylight/forum/blob/master/img/flow.png
+![Image text](https://github.com/Dasiylight/forum/blob/master/img/flow.png)
 
 ### 目录结构
 ```
