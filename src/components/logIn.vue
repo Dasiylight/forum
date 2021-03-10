@@ -1,5 +1,5 @@
 <template>
-  <div id="login">
+  <div id="logIn">
     <router-view></router-view>
     <el-form ref="form" :model="form" label-width="80px" class="login-form">
       <h2 class="login-title">登录界面</h2>
@@ -19,6 +19,8 @@
 </template>
 
 <script>
+  //mapMutation：起映射作用的辅助函数？用于储存函数方法
+  import {mapMutations} from 'vuex';
   export default{
     name: "login",
     data(){
@@ -27,36 +29,44 @@
         form: {
           username: "",
           password: ""
-        }
+        },
+        userToken:''
       }
     },
     methods: {
+      //通过子组件定义的方法传递参数，在…mapMutations引用
+      ...mapMutations(['logStatus']),
       //登录跳转至留言板界面
       Submit:function () {
-        var name = this.form.username;
-        var password = this.form.password;
+        let _this = this;
+        let name = this.form.username;
+        let password = this.form.password;
         //查找用户名
+
         this.$axios.post('/api/user/searchUser', {
           username: name,
           password: password
           },
           {}).then((response) => {
-          console.log(response.data[0].password);
+          console.log(response.data);
           //不存在用户名提示注册
           if(response.data == -1){
             alert("用户不存在，请先注册！");
           }
           else{
             // alert("用户存在");
-            if (password == response.data[0].password){
-              alert("密码正确");
-              //登录成功，进入论坛，传递用户名参数
+            if (response.data.status === 200){
+              alert("密码正确，添加token");
+              console.log(response.data.token)
+              _this.userToken = 'Bearer' + response.data.token;
+              _this.logStatus({ Authorization: _this.userToken });
               this.$router.push({path: '/forum', query:{username:this.form.username}});
-              // this.$router.push('/forum');
             }
-            else {
+            else if (response.data.status === 400){
               alert("密码错误，请重新输入");
-
+            }
+            else  {
+              alert("something wrong?")
             }
           }
         })

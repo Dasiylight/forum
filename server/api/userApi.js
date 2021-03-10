@@ -1,9 +1,10 @@
 //userApi.js
-var models = require('../db')
-var express = require('express')
-var router = express.Router()
-var mysql = require('mysql')
-var $sql = require('../sqlMap')
+const models = require('../db')
+const express = require('express')
+const router = express.Router()
+const mysql = require('mysql')
+const $sql = require('../sqlMap')
+const JwtUtil = require('../jwt')
 
 // 连接数据库
 var conn = mysql.createConnection(models.mysql)
@@ -51,18 +52,29 @@ router.post('/addUser', (req, res) => {
 router.post('/searchUser', (req, res) => {
   var sql = $sql.userinfo.search
   var params = req.body;
+  var password = req.body.password;
   console.log(params);
   conn.query(sql, [params.username, params.password], function (err, result) {
     if (err) {
       console.log(err)
     }
     //未找到用户名时
-    else if (result[0] == undefined){
+    else if (result[0] === undefined){
       res.send('-1');
     }
     else {
-      console.log(result)
-      jsonWrite(res, result)
+      console.log(result[0].password);
+      // jsonWrite(res, result);
+      if (password === result[0].password){
+        // 登陆成功，添加token验证
+        let _id = result[0].username.toString();
+        // 将用户id传入并生成token
+        let jwt = new JwtUtil(_id);
+        let token = jwt.generateToken();
+        res.send({status:200,msg:'登陆成功',token:token});
+      }else {
+        res.send({status:400,msg:'密码错误'})
+      }
     }
   })
 });

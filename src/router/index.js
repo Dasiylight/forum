@@ -14,6 +14,7 @@ const routes = [
   },
   {
     path: '/logIn',
+    name: 'logIn',
     component : logIn
   },
   {
@@ -22,17 +23,33 @@ const routes = [
   },
   {
     path: '/forum',
-    component:  forum
+    component:  forum,
+    //判断是否登录
   }
 ]
   //创建路由对象
 
-
 const router = new VueRouter({
   //配置路由和组件之间的关系
   routes,
-  model: 'history',
+  mode: 'history',
   linkActiveClass: 'active'
 })
+
+//导航守卫，在进入留言板前判断登录状态
+router.beforeEach((to, from, next) => {
+  if(to.path === '/forum'){
+    //判断登录状态
+    let token = sessionStorage.getItem('Authorization');
+    if (token === null || token === ''){
+      next('/logIn')
+    }else {
+      next();
+    }
+  }
+  else {
+    next();
+  }
+});
 
 export default router
