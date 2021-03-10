@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const mysql = require('mysql')
 const $sql = require('../sqlMap')
-const JwtUtil = require('../jwt')
+// const JwtUtil = require('../jwt')
 
 // 连接数据库
 var conn = mysql.createConnection(models.mysql)
@@ -67,11 +67,11 @@ router.post('/searchUser', (req, res) => {
       // jsonWrite(res, result);
       if (password === result[0].password){
         // 登陆成功，添加token验证
-        let _id = result[0].username.toString();
+        // let _id = result[0].username.toString();
         // 将用户id传入并生成token
-        let jwt = new JwtUtil(_id);
-        let token = jwt.generateToken();
-        res.send({status:200,msg:'登陆成功',token:token});
+        // let jwt = new JwtUtil(_id);
+        // let token = jwt.generateToken();
+        res.send({status:200,msg:'登陆成功'});
       }else {
         res.send({status:400,msg:'密码错误'})
       }

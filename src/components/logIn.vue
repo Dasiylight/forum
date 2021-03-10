@@ -42,24 +42,26 @@
         let name = this.form.username;
         let password = this.form.password;
         //查找用户名
-
-        this.$axios.post('/api/user/searchUser', {
+        let logInfo = {
           username: name,
           password: password
-          },
+        };
+        this.$axios.post('/api/user/searchUser', logInfo,
           {}).then((response) => {
           console.log(response.data);
           //不存在用户名提示注册
-          if(response.data == -1){
+          if(response.data === -1){
             alert("用户不存在，请先注册！");
           }
           else{
             // alert("用户存在");
             if (response.data.status === 200){
-              alert("密码正确，添加token");
-              console.log(response.data.token)
-              _this.userToken = 'Bearer' + response.data.token;
-              _this.logStatus({ Authorization: _this.userToken });
+              alert("密码正确，添加到cookie");
+              this.cookie.setCookie(logInfo,30)
+
+              // console.log(response.data.token)
+              // _this.userToken = 'Bearer' + response.data.token;
+              // _this.logStatus({ Authorization: _this.userToken });
               this.$router.push({path: '/forum', query:{username:this.form.username}});
             }
             else if (response.data.status === 400){

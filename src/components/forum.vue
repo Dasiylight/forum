@@ -4,6 +4,7 @@
       <el-col :span="6"><el-button type="primary" icon="el-icon-edit" @click="publish">留言</el-button></el-col>
       <el-col :span="6"><el-button type="info" icon="el-icon-message" @click="showHistory">列表</el-button></el-col>
       <el-col :span="6">欢迎您， {{this.$route.query.username}}</el-col>
+      <el-col :span="6"><el-button type="alert"  @click="exit">退出</el-button></el-col>
     </el-row>
 <!--    <h2>{{$router.query.username}}</h2>-->
     <div style="margin: 20px 0;"></div>
@@ -95,6 +96,11 @@
         });
         console.log(this.historyMessage)
         this.showMessage = true;
+      },
+      exit(){
+        this.cookie.clearCookie("username");
+        this.cookie.clearCookie("password");
+        this.$router.replace('/logIn')
       }
     }
   }

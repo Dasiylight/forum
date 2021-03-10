@@ -8,6 +8,10 @@ import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 import axios from 'axios'
 import Vuex from 'vuex'
+import cookies from './cookies'
+
+//设置为全局变量
+Vue.prototype.cookie = cookies;
 
 Vue.use(Vuex);
 Vue.prototype.$axios =axios
@@ -24,17 +28,17 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-axios.interceptors.request.use(
-  config => {
-    if(config.url==='/logIn'||config.url==='/Register'){  //如果是登录和注册操作，则不需要携带header里面的token
-    }else{
-      if (sessionStorage.getItem('Authorization')) {
-        config.headers.Authorizatior = sessionStorage.getItem('Authorization');
-      }
-    }
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  });
+// axios.interceptors.request.use(
+//   config => {
+//     if(config.url==='/logIn'||config.url==='/Register'){  //如果是登录和注册操作，则不需要携带header里面的token
+//     }else{
+//       if (sessionStorage.getItem('Authorization')) {
+//         config.headers.Authorizatior = sessionStorage.getItem('Authorization');
+//       }
+//     }
+//     return config;
+//   },
+//   error => {
+//     return Promise.reject(error);
+//   });
 
