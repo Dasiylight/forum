@@ -7,7 +7,7 @@ var sqlMap = {
   },
   message: {
     show: 'select * from ??',
-    add: 'insert into message(username,title,content) values(?, ?, ?)',
+    add: 'insert into message(username,title,content,time) values(?, ?, ?, ?)',
   }
 //   reader: {
 //     add: 'insert into reader(name) values (?)',

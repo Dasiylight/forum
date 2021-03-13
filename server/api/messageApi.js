@@ -23,7 +23,7 @@ router.post('/addMessage', (req, res) => {
   var sql = $sql.message.add;
   var params = req.body;
   console.log(params);
-  conn.query(sql, [params.username, params.title, params.content], function (err, result) {
+  conn.query(sql, [params.username, params.title, params.content, params.time], function (err, result) {
     if (err) {
       console.log(err);
     }
