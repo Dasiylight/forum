@@ -34,7 +34,7 @@ router.post('/addUser', (req, res) => {
     }
     //无重复用户名时，添加用户名，注册成功
     if (result[0] == undefined) {
-      conn.query(sql, [params.username, params.password], function (err, result) {
+      conn.query(sql, [params.username, params.password, params.pic], function (err, result) {
         if (err) {
           console.log(err);
         }
@@ -78,6 +78,28 @@ router.post('/searchUser', (req, res) => {
     }
   })
 });
+
+router.post('/searchAvatar', (req, res) =>{
+  let sql = $sql.userinfo.avatar
+  var params = req.body;
+  conn.query(sql, [params.username], function (err, result) {
+    if(err){
+      console.log(err)
+    }
+    if (result[0] === undefined){
+      console.log(result)
+      res.send('-1')
+    }
+    // else if (result[0].pic === null){
+    //   res.send('1')
+    // }
+    else{
+      jsonWrite(res, result)
+    }
+  })
+});
+
+
 //
 // router.post('/readerBorrow', (req, res) => {
 //   var sql = $sql.reader.borrowBook

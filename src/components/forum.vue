@@ -4,10 +4,11 @@
     <el-row type="flex" class="row-bg" justify="space-between">
       <el-col :span="6"><el-button type="primary" icon="el-icon-edit" @click="publish">留言</el-button></el-col>
       <el-col :span="6"><el-button type="info" icon="el-icon-message" @click="showHistory">列表</el-button></el-col>
+      <el-avatar v-if="myAvatar" :span="3"  :src="myAvatar"></el-avatar>
+      <div style="margin: 0 5px;"></div>
       <el-col :span="6">欢迎您， {{this.$route.query.username}}</el-col>
       <el-col :span="6"><el-button type="alert"  @click="exit">退出</el-button></el-col>
     </el-row>
-    <div>{{newMessage.time}}</div>
 
 <!--    <h2>{{$router.query.username}}</h2>-->
     <div style="margin: 20px 0;"></div>
@@ -32,16 +33,16 @@
     <el-button type="success" icon="el-icon-check" v-if="showPublish" @click="submit">提交</el-button>
 
     <div style="margin: 20px 0;"></div>
-    <p v-for="(user,i) in page.pageData" v-if="showMessage">
+    <p v-for="(thing,i) in page.pageData" v-if="showMessage">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <span >{{user.title}}</span>
-
-          <span style="float: right; padding: 3px 0">By: {{user.username}}</span>
+          <span >{{thing.title}}</span>
+          <el-avatar style="float: right " :span="6"  :src="thing.avatar"></el-avatar>
+          <span style="float: right">By: {{thing.username}}</span>
         </div>
         <div  class="text item">
-          <div>{{user.content}}</div>
-          <span style="padding-right: 3px">{{user.time}}</span>
+          <div>{{thing.content}}</div>
+          <span style="padding-right: 3px ">{{thing.time}}</span>
         </div>
       </el-card>
     </p>
@@ -83,9 +84,16 @@
         },
 
         historyMessage:[],
+        // historyAvatar:[],
         showPublish:'',
         showMessage:'',
         showPage:'',
+        user:{
+          username:[],
+          userAvatar:[],
+        },
+        myAvatar:'',
+        defaultAvatar:require("../../img/img.jpg"),
 
         page:{
           current:1,
@@ -138,7 +146,6 @@
           content: content,
           time: time,
         },{}).then((response) => {
-          console.log(response);
           this.showPublish = ''
         });
         alert("发表成功！")
@@ -151,19 +158,53 @@
           {}).then((response) => {
           // console.log(response.data);
           this.historyMessage = response.data;
-          console.log(this.historyMessage.length);
-          this.setCurrentPage()
+          //提取出留言过的用户，得到他们的头像
+          for (let i=0; i<this.historyMessage.length; i++){
+            this.user.username.push(this.historyMessage[i].username);
+          }
+          //去除重复用户
+          for (let i=0; i<this.historyMessage.length; i++){
+            for(let j=1; j<this.historyMessage.length; j++){
+              if (this.user.username[i] === this.user.username[j]){
+                this.user.username.splice(j,1);
+              }
+            }
+          }
+          //为各个用户绑定头像
+          for (let i=0; i<this.user.username.length; i++){
+            this.$http.post('api/user/searchAvatar',{
+              username:this.user.username[i]
+            },{}).then((response)=>{
+              this.user.userAvatar[i] = response.data[0].pic;
+              if (!this.user.userAvatar[i]){
+                this.user.userAvatar[i] = this.defaultAvatar;
+              }
+            });
+          }
+          this.setCurrentPage();
+          //为每条留言赋予头像
+          // console.log(this.historyMessage)
+          // console.log(this.user);
         });
+        // this.$axios.post('api/user/search')
         this.showMessage = true;
         this.showPage = true;
-        // console.log(this.page.current)
       },
 
       setCurrentPage(){
         //改变当前页面的数据
+        for(let i=0; i<this.page.pageData.length; i++) {
+          for (let j = 0; j < this.user.username.length; j++) {
+            if (this.page.pageData[i].username === this.user.username[j]) {
+              this.page.pageData[i].avatar = this.user.userAvatar[j]
+              break
+            }
+          }
+        }
         let beginData = (this.page.current - 1) * this.page.size;
         let endData = this.page.current * this.page.size;
         this.page.pageData = this.historyMessage.slice(beginData, endData);
+
       },
 
       goNextPage(){
@@ -193,6 +234,19 @@
         this.cookie.clearCookie("password");
         this.$router.replace('/logIn')
       },
+    },
+    mounted () {
+      //自动触发写入的函数
+      //get my avatar from database
+      let name = this.$route.query.username;
+      this.$axios.post('api/user/searchAvatar',{
+        username:name
+      },{}).then((response)=>{
+        this.myAvatar = response.data[0].pic;
+        if (!this.myAvatar){
+          this.myAvatar = this.defaultAvatar;
+        }
+      });
     }
   }
 </script>

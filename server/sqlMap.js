@@ -2,8 +2,9 @@
 var sqlMap = {
   // 用户
   userinfo: {
-    add: 'insert into userinfo(username,password) values(?, ?)',
+    add: 'insert into userinfo(username,password,pic) values(?, ?, ?)',
     search: 'select * from userinfo where username = ?',
+    avatar: 'select pic from userinfo where username = ?'
   },
   message: {
     show: 'select * from ??',
