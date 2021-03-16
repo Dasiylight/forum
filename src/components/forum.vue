@@ -6,7 +6,7 @@
       <el-col :span="6"><el-button type="info" icon="el-icon-message" @click="showHistory">列表</el-button></el-col>
       <el-avatar v-if="myAvatar" :span="3"  :src="myAvatar"></el-avatar>
       <div style="margin: 0 5px;"></div>
-      <el-col :span="6">欢迎您， {{this.$route.query.username}}</el-col>
+      <el-col :span="6">欢迎您， {{myName}}</el-col>
       <el-col :span="6"><el-button type="alert"  @click="exit">退出</el-button></el-col>
     </el-row>
 
@@ -63,6 +63,8 @@
 
 <script>
 
+  import cookies from '../cookies'
+
   export default {
     name: 'forum',
 
@@ -76,6 +78,7 @@
 
     data(){
       return{
+        myName:'',
         newMessage:{
           title:"",
           content:"",
@@ -107,7 +110,7 @@
     methods:{
       publish(){
          this.showPublish = true;
-         this.newMessage.username = this.$route.query.username;
+         this.newMessage.username = this.myName;
          this.showMessage = '';
       },
 
@@ -154,45 +157,49 @@
       showHistory(){
         this.showPublish = ''
         this.showMessage = true;
-        this.$axios.get('api/message/searchMessage',
-          {}).then((response) => {
-          // console.log(response.data);
-          this.historyMessage = response.data;
-          //提取出留言过的用户，得到他们的头像
-          for (let i=0; i<this.historyMessage.length; i++){
-            this.user.username.push(this.historyMessage[i].username);
-          }
-          //去除重复用户
-          for (let i=0; i<this.historyMessage.length; i++){
-            for(let j=1; j<this.historyMessage.length; j++){
-              if (this.user.username[i] === this.user.username[j]){
-                this.user.username.splice(j,1);
-              }
-            }
-          }
-          //为各个用户绑定头像
-          for (let i=0; i<this.user.username.length; i++){
-            this.$http.post('api/user/searchAvatar',{
-              username:this.user.username[i]
-            },{}).then((response)=>{
-              this.user.userAvatar[i] = response.data[0].pic;
-              if (!this.user.userAvatar[i]){
-                this.user.userAvatar[i] = this.defaultAvatar;
-              }
-            });
-          }
-          this.setCurrentPage();
+        // this.$axios.get('api/message/searchMessage',
+        //   {}).then((response) => {
+        //   // console.log(response.data);
+        //   this.historyMessage = response.data;
+        //   //提取出留言过的用户，得到他们的头像
+        //   for (let i=0; i<this.historyMessage.length; i++){
+        //     this.user.username.push(this.historyMessage[i].username);
+        //   }
+        //   //去除重复用户
+        //   for (let i=0; i<this.historyMessage.length; i++){
+        //     for(let j=1; j<this.historyMessage.length; j++){
+        //       if (this.user.username[i] === this.user.username[j]){
+        //         this.user.username.splice(j,1);
+        //       }
+        //     }
+        //   }
+        //   //为各个用户绑定头像
+        //   for (let i=0; i<this.user.username.length; i++){
+        //     this.$http.post('api/user/searchAvatar',{
+        //       username:this.user.username[i]
+        //     },{}).then((response)=>{
+        //       this.user.userAvatar[i] = response.data[0].pic;
+        //       if (!this.user.userAvatar[i]){
+        //         this.user.userAvatar[i] = this.defaultAvatar;
+        //       }
+        //     });
+        //   }
+        this.setCurrentPage();
+        console.log(this.page.pageData)
+        console.log(this.user.userAvatar)
           //为每条留言赋予头像
           // console.log(this.historyMessage)
           // console.log(this.user);
-        });
-        // this.$axios.post('api/user/search')
+
         this.showMessage = true;
         this.showPage = true;
       },
 
       setCurrentPage(){
         //改变当前页面的数据
+        let beginData = (this.page.current - 1) * this.page.size;
+        let endData = this.page.current * this.page.size;
+        this.page.pageData = this.historyMessage.slice(beginData, endData);
         for(let i=0; i<this.page.pageData.length; i++) {
           for (let j = 0; j < this.user.username.length; j++) {
             if (this.page.pageData[i].username === this.user.username[j]) {
@@ -201,9 +208,7 @@
             }
           }
         }
-        let beginData = (this.page.current - 1) * this.page.size;
-        let endData = this.page.current * this.page.size;
-        this.page.pageData = this.historyMessage.slice(beginData, endData);
+
 
       },
 
@@ -236,6 +241,8 @@
       },
     },
     mounted () {
+      //设置当前名称
+      this.myName = cookies.getCookie('name')||this.$route.query.username;
       //自动触发写入的函数
       //get my avatar from database
       let name = this.$route.query.username;
@@ -245,6 +252,36 @@
         this.myAvatar = response.data[0].pic;
         if (!this.myAvatar){
           this.myAvatar = this.defaultAvatar;
+        }
+      });
+
+      this.$axios.get('api/message/searchMessage',
+        {}).then((response) => {
+        // console.log(response.data);
+        this.historyMessage = response.data;
+        //提取出留言过的用户，得到他们的头像
+
+        for (let i = 0; i < this.historyMessage.length; i++) {
+          this.user.username.push(this.historyMessage[i].username);
+        }
+        //去除重复用户
+        for (let i = 0; i < this.historyMessage.length; i++) {
+          for (let j = 1; j < this.historyMessage.length; j++) {
+            if (this.user.username[i] === this.user.username[j]) {
+              this.user.username.splice(j, 1);
+            }
+          }
+        }
+        //为各个用户绑定头像
+        for (let i = 0; i < this.user.username.length; i++) {
+          this.$http.post('api/user/searchAvatar', {
+            username: this.user.username[i]
+          }, {}).then((response) => {
+            this.user.userAvatar[i] = response.data[0].pic;
+            if (!this.user.userAvatar[i]) {
+              this.user.userAvatar[i] = this.defaultAvatar;
+            }
+          });
         }
       });
     }

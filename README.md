@@ -27,8 +27,13 @@ DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message`  (
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `time` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `uid` int(0) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`uid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- ----------------------------
 -- Table structure for userinfo
@@ -38,8 +43,9 @@ CREATE TABLE `userinfo`  (
   `uid` bigint(0) NOT NULL AUTO_INCREMENT,
   `username` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `password` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `pic` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   PRIMARY KEY (`uid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```
@@ -73,9 +79,19 @@ npm run serve
         |-- router //路由配置
       |-- App.vue
       |-- main.js
+      |-- cookies.js //定义cookies功能
   |-- vue.config.js  //设置了跨域代理
 
 ```
+
+### 内容更新 
+Version1.1:   
+1. 增加了留言板显示翻页功能，4条为一页  
+2. 增加了Cookie保存用户信息，保存时间为30分钟；增加路由守卫，防止未登录直接进入留言板。
+3. 增加了头像上传功能，未上传时显示默认头像。（采用base64编码方式上传至数据库，数据库结构有改变）
+4. 增加了显示留言时间功能
+5. 下一步改进：采用Session替代Cookies，改进排版等，头像上传可尝试其他方法
+
 ### 内容参考
 Vue: <https://cn.vuejs.org/v2/guide/>  
 Element UI: <https://element.eleme.cn/>  

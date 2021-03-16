@@ -55,6 +55,7 @@ router.beforeEach((to, from, next) => {
     //如果需要登录权限
     if (to.meta.requireAuth){
       if (cookies.getCookie("username")){
+        console.log(cookies.getCookie("username"))
         next();
       }
       else{
