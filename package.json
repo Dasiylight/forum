@@ -12,8 +12,10 @@
     "core-js": "^2.6.5",
     "element-ui": "^2.15.1",
     "express": "^4.17.1",
+    "iconv-lite": "^0.6.2",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "silly-datetime": "^0.1.2",
     "vue": "^2.6.10",
     "vue-cookies": "^1.7.4",
     "vue-resource": "^1.0.3",
@@ -27,8 +29,10 @@
     "@vue/eslint-config-standard": "^4.0.0",
     "axios": "^0.21.1",
     "babel-eslint": "^10.0.1",
+    "cookie-parser": "^1.4.5",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "formidable": "^1.2.2",
     "vue-template-compiler": "^2.6.10"
   }
 }

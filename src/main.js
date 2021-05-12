@@ -19,6 +19,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(VueResource)
+axios.defaults.withCredentials=true
 
 /* eslint-disable */
 

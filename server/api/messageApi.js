@@ -1,4 +1,5 @@
 //messageApi.js
+
 var models = require('../db')
 var express = require('express')
 var router = express.Router()
@@ -22,7 +23,8 @@ var jsonWrite = function (res, ret) {
 router.post('/addMessage', (req, res) => {
   var sql = $sql.message.add;
   var params = req.body;
-  console.log(params);
+
+  // console.log(params);
   conn.query(sql, [params.username, params.title, params.content, params.time], function (err, result) {
     if (err) {
       console.log(err);
@@ -37,7 +39,8 @@ router.post('/addMessage', (req, res) => {
 router.get('/searchMessage', (req, res) => {
   var sql = $sql.message.show
   var params = req.body;
-  console.log(params);
+  // console.log(params);
+  console.log("这是cookie:" + req.cookies);
   conn.query(sql, 'message', function (err, result) {
     if (err) {
       console.log(err)

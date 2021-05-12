@@ -89,7 +89,7 @@
     top: 50%;
     left: 50%;
     margin: 160px auto; /* 上下间距160px，左右自动居中*/
-    background-color: rgb(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 30px;
     border-radius: 30px;
   }
@@ -101,5 +101,6 @@
   .login-title {
     color: cornflowerblue;
     text-align: center;
+    margin:0 auto;
   }
 </style>

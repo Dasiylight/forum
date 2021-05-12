@@ -208,8 +208,6 @@
             }
           }
         }
-
-
       },
 
       goNextPage(){
@@ -249,9 +247,22 @@
       this.$axios.post('api/user/searchAvatar',{
         username:name
       },{}).then((response)=>{
-        this.myAvatar = response.data[0].pic;
-        if (!this.myAvatar){
+        if (!response.data[0].pic){
           this.myAvatar = this.defaultAvatar;
+        }
+        else {
+          let addr = response.data[0].pic
+          this.$axios.post('api/readImage/read',{
+            addr
+          },{}).then((response)=>{
+            console.log(response.data)
+            if(response.status === -1){
+              this.myAvatar = this.defaultAvatar;
+            }else {
+              let src = window.URL.createObjectURL(response.data)
+              this.myAvatar = src
+            }
+          })
         }
       });
 
@@ -274,12 +285,14 @@
         }
         //为各个用户绑定头像
         for (let i = 0; i < this.user.username.length; i++) {
-          this.$http.post('api/user/searchAvatar', {
+          this.$axios.post('api/user/searchAvatar', {
             username: this.user.username[i]
           }, {}).then((response) => {
-            this.user.userAvatar[i] = response.data[0].pic;
-            if (!this.user.userAvatar[i]) {
+            if (!response.data[0].pic) {
               this.user.userAvatar[i] = this.defaultAvatar;
+            }
+            else {
+              // this.user.userAvatar[i] = require("@/" + response.data[0].pic);
             }
           });
         }

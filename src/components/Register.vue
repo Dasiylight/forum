@@ -15,13 +15,16 @@
       <el-form-item label="上传头像">
         <el-upload
           class="avatar-uploader"
-          action="#"
+          action="/api/saveImage/upload"
+          ref="upload"
           :auto-upload="false"
           :show-file-list="false"
-          :on-change="handleChange">
+          :on-change="handleChange"
+          :on-success="upload">
           <img v-if="imageUrl" :src="imageUrl" width="100px" height="100px" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
+
 
       </el-form-item>
     </el-form>
@@ -67,7 +70,8 @@
         imageStr: '',
         imageUrl: '',
         // dialogImageUrl: '',
-        file: ''
+        file: '',
+        fname:''
       }
     },
     methods: {
@@ -78,33 +82,10 @@
           //检查密码两次输入的密码是否相同
           if (this.newUser.password === this.newUser.checkedPassword) {
             // console.log(this.file)
-
             alert("完成注册");
-            let name = this.newUser.username;
-            let password = this.newUser.password;
-            let fd = this.imageUrl
-            // alert(name);
-            //添加用户，若用户已存在，则添加失败
-            console.log(this.imageUrl);
-            this.$axios.post('/api/user/addUser', {
-              username: name,
-              password: password,
-              pic: fd,
-            }, {}).then((response) => {
-              // console.log(response);
-              //判断添加是否成功
-              if (response.data == -1) {
-                this.repeatedUser = true;
-              } else {
-                //注册成功
-                this.$alert('注册成功，即将跳转至登录界面', '完成注册', {
-                  confirmButtonText: '确定',
-                  callback: action => {
-                    this.$router.push('/logIn')
-                  }
-                })
-              }
-            })
+
+            this.$refs.upload.submit();
+            //注册校验成功，执行html的el-uploader中的action，并跳转到上传模块upload
 
           } else {
             this.checkSame = true;
@@ -114,9 +95,36 @@
         }
       },
 
-      handleAvatarSuccess (res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
-        // this.dialogImageUrl = file.url;
+      upload(response, file, fileList) {
+        console.log(response);
+        this.fname = response.result.url
+        let name = this.newUser.username;
+        let password = this.newUser.password;
+        // alert(name);
+        //添加用户，若用户已存在，则添加失败
+        //上传头像到服务器
+        //返回一个url存到数据库里
+        console.log(this.fname)
+        let fd = this.fname
+        this.$axios.post('/api/user/addUser', {
+          username: name,
+          password: password,
+          pic: fd,
+        }, {}).then((response) => {
+          // console.log(response);
+          //判断添加是否成功
+          if (response.data === -1) {
+            this.repeatedUser = true;
+          } else {
+            //注册成功
+            this.$alert('注册成功，即将跳转至登录界面', '完成注册', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/logIn')
+              }
+            })
+          }
+        })
       },
 
       handleChange (file) {
@@ -124,7 +132,8 @@
         // this.dialogImageUrl = file.url;
         this.imageUrl = URL.createObjectURL(file.raw);
         this.file = file.raw;
-        console.log(file);
+        // this.fname = file.response.result.url
+        const formatTime = require('silly-datetime');
         const isJPG = file.raw.type === 'image/jpeg';
         const isLt2M = file.raw.size / 1024 / 1024 < 2;
 
@@ -140,7 +149,7 @@
           reader.onload = function () {
             // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
             _this.imageUrl = reader.result;
-            console.log(_this.imageUrl);
+            // console.log(_this.imageUrl);
             // 下面逻辑处理
           };
         }
